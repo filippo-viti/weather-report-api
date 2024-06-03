@@ -15,7 +15,18 @@ class WeatherForecast(models.Model):
     date = models.DateField()
     time = models.TimeField()
     temperature = models.FloatField()
-    description = models.CharField(max_length=255)
+
+    WEATHER_CHOICES = [
+        ('Sunny', 'Sunny'),
+        ('Partly Cloudy', 'Partly Cloudy'),
+        ('Cloudy', 'Cloudy'),
+        ('Rainy', 'Rainy'),
+        ('Snowy', 'Snowy'),
+        ('Stormy', 'Stormy'),
+        ('Foggy', 'Foggy'),
+        ('Windy', 'Windy'),
+    ]
+    description = models.CharField(max_length=20, choices=WEATHER_CHOICES)
 
     def __str__(self):
         return f'{self.date} {self.time} - {self.location.name}'
