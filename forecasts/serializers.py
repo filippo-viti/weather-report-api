@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, WeatherForecast, WeatherQuery
+from .models import Location, WeatherForecast
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -9,12 +9,8 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class WeatherForecastSerializer(serializers.ModelSerializer):
+    location = LocationSerializer()
+
     class Meta:
         model = WeatherForecast
-        fields = '__all__'
-
-
-class WeatherQuerySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WeatherQuery
         fields = '__all__'

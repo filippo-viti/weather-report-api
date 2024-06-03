@@ -1,29 +1,30 @@
 from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Location, WeatherForecast
+from .serializers import LocationSerializer, WeatherForecastSerializer
 
-from .models import WeatherForecast, WeatherQuery, Location
-from .serializers import WeatherForecastSerializer, WeatherQuerySerializer, LocationSerializer
 
-
-class LocationView(generics.ListAPIView):
+class LocationListCreate(generics.ListCreateAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
 
 
-class WeatherForecastView(generics.ListAPIView):
+class WeatherForecastListCreate(generics.ListCreateAPIView):
+    queryset = WeatherForecast.objects.all()
     serializer_class = WeatherForecastSerializer
 
-    def get_queryset(self):
-        location_id = self.request.query_params.get('location_id')
-        # forecast_date = self.request.query_params.get('date')
-        # forecast_time = self.request.query_params.get('time')
-        queryset = WeatherForecast.objects.filter(
-            location_id=location_id,
-        #   forecast_time__date=forecast_date,
-        #   forecast_time__time=forecast_time
-        )
-        return queryset
 
+@api_view(['GET'])
+def get_forecast(request):
+    location_name = request.query_params.get('location')
+    date = request.query_params.get('date')
+    time = request.query_params.get('time')
 
-class WeatherQueryView(generics.CreateAPIView):
-    queryset = WeatherQuery.objects.all()
-    serializer_class = WeatherQuerySerializer
+    try:
+        location = Location.objects.get(name=location_name)
+        forecast = WeatherForecast.objects.get(location=location, date=date, time=time)
+        serializer = WeatherForecastSerializer(forecast)
+        return Response(serializer.data)
+    except (Location.DoesNotExist, WeatherForecast.DoesNotExist):
+        return Response({'error': 'Forecast not found'}, status=404)
