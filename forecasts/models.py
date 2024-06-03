@@ -15,6 +15,7 @@ class WeatherForecast(models.Model):
     date = models.DateField()
     time = models.TimeField()
     temperature = models.FloatField()
+    description = models.CharField(max_length=255)
 
     def __str__(self):
         return f'{self.date} {self.time} - {self.location.name}'
