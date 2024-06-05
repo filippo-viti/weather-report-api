@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
+    'accounts.apps.AccountsConfig',
 ]
 
 SITE_ID = 1  # Needed by django-allauth
@@ -137,3 +138,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication'
     ]
 }
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
