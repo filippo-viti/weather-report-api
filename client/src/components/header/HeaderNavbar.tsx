@@ -1,5 +1,7 @@
-import {Col, Container, Form, Navbar, Row} from "react-bootstrap";
+import {Button, Col, Container, Form, Navbar, Row, Stack} from "react-bootstrap";
 import {ColorModeButton} from "./ColorModeButton.tsx";
+import ProfileButton from "./ProfileButton.tsx";
+import GitHubButton from "./GitHubButton.tsx";
 
 export default function HeaderNavbar() {
   return (
@@ -19,7 +21,13 @@ export default function HeaderNavbar() {
             </Col>
           </Row>
         </Form>
-        <ColorModeButton/>
+        <Stack className={"ms-auto"} direction={"horizontal"}>
+          <ProfileButton/>
+          <Button variant="primary" className="ms-2">Login</Button>
+          <Button variant="primary" className="ms-2">Sign up</Button>
+          <ColorModeButton/>
+          <GitHubButton/>
+        </Stack>
       </Container>
     </Navbar>
   );

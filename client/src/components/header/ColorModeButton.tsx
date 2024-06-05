@@ -9,17 +9,24 @@ export function ColorModeButton() {
     if (isDarkMode) {
       document.documentElement.setAttribute('data-bs-theme', 'dark');
     } else {
-        document.documentElement.setAttribute('data-bs-theme', 'light');
+      document.documentElement.setAttribute('data-bs-theme', 'light');
     }
   }, [isDarkMode]);
 
   const lightModeIcon = <i className="bi bi-sun"></i>
   const darkModeIcon = <i className="bi bi-moon-stars"></i>
+
+  // TODO: refactor this
   const buttonStyle = {
-    backgroundColor: "transparent",
-    border: "none"
+    height: "32px",
+    border: "none",
+    borderRadius: "50%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   }
   return (
-    <Button style={buttonStyle} className="p-2 ms-auto" onClick={() => setIsDarkMode(!isDarkMode)}
-            aria-label="Dark mode toggle">{isDarkMode ? darkModeIcon : lightModeIcon}</Button>)
+    <Button className="p-2 m-2" style={buttonStyle} onClick={() => setIsDarkMode(!isDarkMode)}
+            aria-label="Dark mode toggle">{isDarkMode ? darkModeIcon : lightModeIcon}</Button>
+  )
 }
