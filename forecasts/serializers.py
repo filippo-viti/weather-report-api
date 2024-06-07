@@ -14,3 +14,10 @@ class WeatherForecastSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherForecast
         fields = '__all__'
+
+
+class AverageWeatherSerializer(serializers.Serializer):
+    location = LocationSerializer()
+    date = serializers.DateField()
+    average_temperature = serializers.FloatField()
+    average_weather = serializers.CharField()
