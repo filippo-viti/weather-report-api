@@ -11,7 +11,7 @@ function App() {
   const [key, setKey] = useState<number>(0)
 
   useEffect(() => {
-    fetch(apiURL + "location")
+    fetch(apiURL + "locations")
       .then(response => response.json())
       .then(data => setLocations(data))
   }, []);

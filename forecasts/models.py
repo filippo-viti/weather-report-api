@@ -1,4 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+
+User = get_user_model()
 
 
 class Location(models.Model):
@@ -30,3 +33,16 @@ class WeatherForecast(models.Model):
 
     def __str__(self):
         return f'{self.date} {self.time} - {self.location.name}'
+
+
+class UserQuery(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='Processing')
+    result = models.ForeignKey(WeatherForecast, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.location.name} - {self.date} {self.time}'

@@ -3,36 +3,35 @@ from datetime import datetime
 from django.db.models import Avg
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 
-from .models import Location, WeatherForecast
-from .serializers import LocationSerializer, WeatherForecastSerializer, AverageWeatherSerializer
+from .models import Location, WeatherForecast, UserQuery
+from .serializers import LocationSerializer, WeatherForecastSerializer, AverageWeatherSerializer, UserQuerySerializer
 
 
-class LocationListCreate(generics.ListCreateAPIView):
+class LocationList(generics.ListAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
 
 
-class WeatherForecastListCreate(generics.ListCreateAPIView):
+class LocationDetail(generics.RetrieveAPIView):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+
+
+class WeatherForecastList(generics.ListAPIView):
     queryset = WeatherForecast.objects.all()
     serializer_class = WeatherForecastSerializer
 
 
-@api_view(['GET'])
-def get_forecast(request):
-    location_name = request.query_params.get('location')
-    date = request.query_params.get('date')
-    time = request.query_params.get('time')
+class UserQueryListCreate(generics.ListCreateAPIView):
+    queryset = UserQuery.objects.all()
+    serializer_class = UserQuerySerializer
 
-    try:
-        location = Location.objects.get(name=location_name)
-        forecast = WeatherForecast.objects.get(location=location, date=date, time=time)
-        serializer = WeatherForecastSerializer(forecast)
-        return Response(serializer.data)
-    except (Location.DoesNotExist, WeatherForecast.DoesNotExist):
-        return Response({'error': 'Forecast not found'}, status=404)
+
+class UserQueryDetail(generics.RetrieveAPIView):
+    queryset = UserQuery.objects.all()
+    serializer_class = UserQuerySerializer
 
 
 class AverageWeatherView(APIView):
