@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="api" type="Python.DjangoServer" factoryName="Django server">
-    <module name="weather_report_api" />
+    <module name="weather-report-api" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
