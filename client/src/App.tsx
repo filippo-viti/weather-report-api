@@ -4,16 +4,15 @@ import {useEffect, useState} from "react";
 import {Container, Tab, Tabs} from "react-bootstrap";
 import LocationCard from "./components/forecasts/LocationCard.tsx";
 import {Location} from "./types";
+import {fetchLocations} from "./api.ts";
 
 function App() {
-  const apiURL: string = "http://localhost:8000/api/"
   const [locations, setLocations] = useState<Location[]>([])
   const [key, setKey] = useState<number>(0)
-
   useEffect(() => {
-    fetch(apiURL + "locations")
-      .then(response => response.json())
+    fetchLocations()
       .then(data => setLocations(data))
+      .catch(error => console.error('Error fetching locations:', error));
   }, []);
 
   return (
