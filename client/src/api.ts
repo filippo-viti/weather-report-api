@@ -8,11 +8,11 @@ export const fetchLocations = async () => {
   return response.json();
 };
 
-export const registerUser = async (email: string, password1: string, password2: string) => {
-  const response = await fetch(`${BASE_API_URL}/auth/registration`, {
+export const registerUser = async (username: string, password: string, password2: string, email: string) => {
+  const response = await fetch(`${BASE_API_URL}/auth/register/`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({email, password1, password2})
+    body: JSON.stringify({username, password, password2, email})
   });
   if (!response.ok) {
     throw new Error('Failed to register user');
@@ -20,14 +20,25 @@ export const registerUser = async (email: string, password1: string, password2: 
   return response.json();
 }
 
-export const loginUser = async (email: string, password: string) => {
-  const response = await fetch(`${BASE_API_URL}/auth/login`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({email, password})
-  });
-  if (!response.ok) {
-    throw new Error('Failed to login user');
+export const loginUser = async (username: string, password: string) => {
+  try {
+    const response = await fetch(`${BASE_API_URL}/auth/token/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+      const errorDetails = await response.text();
+      console.error('Failed to login user:', errorDetails);
+      throw new Error(`Failed to login user: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error during login:', error);
+    throw error;
   }
-  return response.json();
-}
+};
