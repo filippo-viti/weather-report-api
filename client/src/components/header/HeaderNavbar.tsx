@@ -1,17 +1,13 @@
-import {Button, Col, Container, Form, Navbar, Row, Stack} from "react-bootstrap";
+import {Col, Container, Form, Navbar, Row, Stack} from "react-bootstrap";
 import {ColorModeButton} from "./ColorModeButton.tsx";
 import ProfileButton from "./ProfileButton.tsx";
 import GitHubButton from "./GitHubButton.tsx";
-import {useState} from "react";
-import LoginModal from "../authentication/LoginModal.tsx";
-import RegisterModal from "../authentication/RegisterModal.tsx";
+import LoginButton from "../authentication/LoginButton.tsx";
+import RegisterButton from "../authentication/RegisterButton.tsx";
 import {useAuth} from "../authentication/AuthProvider.tsx";
 
 export default function HeaderNavbar() {
   const {authToken} = useAuth();
-  const [loginModalShow, setLoginModalShow] = useState<boolean>(false);
-  const [registerModalShow, setRegisterModalShow] = useState<boolean>(false);
-  // TODO: hide modal on successful login
 
   return (
     <Navbar expand="lg" bg={"primary"}>
@@ -32,15 +28,8 @@ export default function HeaderNavbar() {
         </Form>
         <Stack className={"ms-auto"} direction={"horizontal"}>
           {authToken && <ProfileButton/>}
-
-          {!authToken &&
-              <Button variant="primary" className="ms-2" onClick={() => setLoginModalShow(true)}>Login</Button>}
-          <LoginModal show={loginModalShow} onHide={() => setLoginModalShow(false)}/>
-
-          {!authToken &&
-              <Button variant="primary" className="ms-2" onClick={() => setRegisterModalShow(true)}>Sign up</Button>}
-          <RegisterModal show={registerModalShow} onHide={() => setRegisterModalShow(false)}/>
-
+          {!authToken && <LoginButton/>}
+          {!authToken && <RegisterButton/>}
           <ColorModeButton/>
           <GitHubButton/>
         </Stack>
