@@ -1,4 +1,4 @@
-import {Card, CardBody, CardHeader, CardText, CardTitle, Col, Row} from "react-bootstrap";
+import {Card, CardBody, CardHeader, CardText, CardTitle, Row} from "react-bootstrap";
 import {WeatherDescription, WeatherForecast} from "../../types";
 
 export default function WeekdayCard({weather}: { weather: WeatherForecast }) {
@@ -8,15 +8,13 @@ export default function WeekdayCard({weather}: { weather: WeatherForecast }) {
         <CardTitle>{weather.date}</CardTitle>
       </CardHeader>
       <CardBody>
-        <Row>
-          <Col className={"text-center align-content-center fs-1"}>
+          <Row className={"text-center align-content-center fs-1"}>
             <i className={getWeatherIcon(weather.description)}></i>
-          </Col>
-          <Col className={"text-center"}>
+          </Row>
+          <Row className={"text-center"}>
             <CardText className={"m-0"}>{weather.description}</CardText>
             <CardText>{weather.temperature}°C</CardText>
-          </Col>
-        </Row>
+          </Row>
       </CardBody>
     </Card>
   )
