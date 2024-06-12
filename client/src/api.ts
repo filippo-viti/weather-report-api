@@ -27,7 +27,7 @@ export const loginUser = async (username: string, password: string) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({username, password}),
     });
 
     if (!response.ok) {
@@ -50,7 +50,7 @@ export const refreshToken = async (refresh: string) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ refresh }),
+      body: JSON.stringify({refresh}),
     });
 
     if (!response.ok) {
@@ -62,6 +62,56 @@ export const refreshToken = async (refresh: string) => {
     return response.json();
   } catch (error) {
     console.error('Error during token refresh:', error);
+    throw error;
+  }
+}
+
+export const submitQuery = async (location: string, date: string, time: string, user: string, token: string) => {
+  try {
+    const response = await fetch(`${BASE_API_URL}/queries/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({location, date, time, user}),
+    });
+    return response.json();
+  } catch (error) {
+    console.error('Error during query submission:', error);
+    throw error;
+  }
+}
+
+export const checkQueryStatus = async (queryId: string, token: string) => {
+  try {
+    const response = await fetch(`${BASE_API_URL}/queries/${queryId}/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    return response.json();
+  } catch (error) {
+    console.error('Error during query status check:', error);
+    throw error;
+
+  }
+}
+
+export const fetchQueryResult = async (queryId: string, token: string) => {
+  try {
+    const response = await fetch(`${BASE_API_URL}/queries/${queryId}/result/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    return response.json();
+  } catch (error) {
+    console.error('Error during query result fetch:', error);
     throw error;
   }
 }

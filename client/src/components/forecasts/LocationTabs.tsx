@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Location} from "../../types";
 import {fetchLocations} from "../../api.ts";
 import {Tab, Tabs} from "react-bootstrap";
-import LocationCard from "./LocationCard.tsx";
+import LocationContainer from "./LocationContainer.tsx";
 
 export function LocationTabs() {
   const [locations, setLocations] = useState<Location[]>([])
@@ -17,7 +17,7 @@ export function LocationTabs() {
     <Tabs activeKey={key} onSelect={(k) => setKey(Number(k))} id="location-tabs" variant={"underline"} fill>
       {locations.map((location, index) => (
         <Tab eventKey={index} title={location.name} key={index}>
-          <LocationCard location={location}/>
+          <LocationContainer location={location}/>
         </Tab>
       ))}
     </Tabs>
