@@ -1,27 +1,32 @@
-
-import { createContext, useContext, useState, ReactNode, FC } from 'react';
+import {createContext, useContext, useState, ReactNode, FC} from 'react';
+import {JWTResponse} from "../../types";
 
 interface AuthContextType {
-  authToken: string | null;
-  login: (token: string) => void;
+  accessToken: string | null;
+  login: (token: JWTResponse) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: FC<{ children: ReactNode }> = function ({ children }) {
-  const [authToken, setAuthToken] = useState<string | null>(null);
+export const AuthProvider: FC<{ children: ReactNode }> = function ({children}) {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  const login = (token: string) => {
-    setAuthToken(token);
+  const login = (token: JWTResponse) => {
+    setAccessToken(token.access);
+    if (token.refresh) {
+      localStorage.setItem('refreshToken', token.refresh);  // Notice: this is insecure but has been done for simplicity
+    }
   };
 
   const logout = () => {
-    setAuthToken(null);
+    setAccessToken(null);
+    localStorage.removeItem('refreshToken');
+    window.location.reload();
   };
 
   return (
-    <AuthContext.Provider value={{ authToken, login, logout }}>
+    <AuthContext.Provider value={{accessToken, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

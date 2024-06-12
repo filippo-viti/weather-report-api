@@ -5,6 +5,7 @@ import {LocationTabs} from "./components/forecasts/LocationTabs.tsx";
 import {AuthProvider} from "./components/authentication/AuthProvider.tsx";
 
 function App() {
+
   return (
     <AuthProvider>
       <HeaderNavbar/>

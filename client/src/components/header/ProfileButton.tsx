@@ -2,7 +2,7 @@ import {Dropdown, DropdownButton} from "react-bootstrap";
 import {useAuth} from "../authentication/AuthProvider.tsx";
 
 export default function ProfileButton() {
-  const {authToken, logout} = useAuth();
+  const {logout: logout} = useAuth();
   return (
     <DropdownButton title={<i className="bi bi-person-circle"></i>} align="end">
       <Dropdown.Item>Profile</Dropdown.Item>

@@ -4,3 +4,8 @@ export interface Location {
   latitude: number,
   longitude: number
 }
+
+export interface JWTResponse {
+  access: string;
+  refresh: string;
+}

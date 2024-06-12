@@ -42,3 +42,26 @@ export const loginUser = async (username: string, password: string) => {
     throw error;
   }
 };
+
+export const refreshToken = async (refresh: string) => {
+  try {
+    const response = await fetch(`${BASE_API_URL}/auth/token/refresh/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh }),
+    });
+
+    if (!response.ok) {
+      const errorDetails = await response.text();
+      console.error('Failed to refresh token:', errorDetails);
+      throw new Error(`Failed to refresh token: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error during token refresh:', error);
+    throw error;
+  }
+}

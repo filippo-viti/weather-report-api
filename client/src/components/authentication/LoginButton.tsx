@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Button, Form, Modal, ModalBody, ModalHeader, ModalTitle} from "react-bootstrap";
 import {useAuth} from "./AuthProvider.tsx";
 import {loginUser} from "../../api.ts";
-
+import {JWTResponse} from "../../types";
 
 export default function LoginButton() {
   const [loginModalShow, setLoginModalShow] = useState<boolean>(false);
@@ -11,7 +11,7 @@ export default function LoginButton() {
   const [password, setPassword] = useState<string>('');
 
   const handleLogin = async () => {
-    const token = await loginUser(username, password);
+    const token : JWTResponse = await loginUser(username, password);
     login(token);
   };
   return (

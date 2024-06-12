@@ -1,39 +1,71 @@
-import {Col, Container, Form, Navbar, Row, Stack} from "react-bootstrap";
+import {Alert, Col, Container, Form, Navbar, Row, Stack} from "react-bootstrap";
 import {ColorModeButton} from "./ColorModeButton.tsx";
 import ProfileButton from "./ProfileButton.tsx";
 import GitHubButton from "./GitHubButton.tsx";
 import LoginButton from "../authentication/LoginButton.tsx";
 import RegisterButton from "../authentication/RegisterButton.tsx";
 import {useAuth} from "../authentication/AuthProvider.tsx";
+import {useEffect, useState} from "react";
+import {refreshToken} from "../../api.ts";
 
 export default function HeaderNavbar() {
-  const {authToken} = useAuth();
+  const {accessToken, login} = useAuth();
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    const refresh = localStorage.getItem('refreshToken');
+    if (refresh) {
+      refreshToken(refresh)
+        .then(token => {
+          login(token);
+        })
+        .catch(error => {
+          console.error('Failed to refresh token:', error);
+        });
+    }
+  }, [login]);
+
+  useEffect(() => {
+    if (accessToken) {
+      setShowAlert(true);
+      const timer = setTimeout(() => setShowAlert(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [accessToken]);
 
   return (
-    <Navbar expand="lg" bg={"primary"}>
-      <Container>
-        <Navbar.Brand href="#home">Weather Report</Navbar.Brand>
-        <Form>
-          <Row>
-            <Col xs="auto">
-              <Form.Control
-                type="text"
-                placeholder="Search location"
-                className="mr-sm-2"
-              />
-            </Col>
-            <Col xs="auto">
-            </Col>
-          </Row>
-        </Form>
-        <Stack className={"ms-auto"} direction={"horizontal"}>
-          {authToken && <ProfileButton/>}
-          {!authToken && <LoginButton/>}
-          {!authToken && <RegisterButton/>}
-          <ColorModeButton/>
-          <GitHubButton/>
-        </Stack>
-      </Container>
-    </Navbar>
+    <>
+      <Navbar expand="lg" bg={"primary"}>
+        <Container>
+          <Navbar.Brand href="#home">Weather Report</Navbar.Brand>
+          <Form>
+            <Row>
+              <Col xs="auto">
+                <Form.Control
+                  type="text"
+                  placeholder="Search location"
+                  className="mr-sm-2"
+                />
+              </Col>
+              <Col xs="auto">
+              </Col>
+            </Row>
+          </Form>
+          <Stack className={"ms-auto"} direction={"horizontal"}>
+            {accessToken && <ProfileButton/>}
+            {!accessToken && <LoginButton/>}
+            {!accessToken && <RegisterButton/>}
+            <ColorModeButton/>
+            <GitHubButton/>
+          </Stack>
+        </Container>
+      </Navbar>
+      {showAlert && (
+        <Alert variant="success" onClose={() => setShowAlert(false)} dismissible>
+          Welcome back!
+        </Alert>
+      )}
+
+    </>
   );
 }
