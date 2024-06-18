@@ -24,7 +24,7 @@ class WeatherForecastList(generics.ListAPIView):
     serializer_class = WeatherForecastSerializer
 
 
-class UserQueryListCreate(generics.ListCreateAPIView):
+class UserQueryCreate(generics.CreateAPIView):
     queryset = UserQuery.objects.all()
     serializer_class = UserQuerySerializer
 
