@@ -58,6 +58,12 @@ Here is the basic flow of how the authentication works:
         }
         ```
 
+4. ### Accessing Protected Endpoints
+    - To access protected endpoints, include the `access` token in the `Authorization` header of the request. Example:
+      ```
+        http https://{server}/api/protected-endpoint/ "Authorization Bearer {access_token}"
+      ```
+
 ## Weather API Endpoints:
 
 | Endpoint             | HTTP Method | CRUD Method | Result                     |
