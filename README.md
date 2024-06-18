@@ -72,3 +72,58 @@ Here is the basic flow of how the authentication works:
 | `/api/locations/:id` | GET         | READ        | Get a single location      |
 | `/api/queries`       | POST        | CREATE      | Submit a new query         |
 | `/api/queries/:id`   | GET         | READ        | Get the details of a query |
+
+## Example Workflow
+
+1. ### User Submits a Query:
+   Request:
+
+   ```
+   http POST /api/queries Content-Type: application/json
+   {
+       "location": "New York, NY",
+       "date": "2024-06-10",
+       "time": "14:00"
+   }
+   ```
+
+   Response:
+
+   ```json
+   {
+        "id": "123456",
+        "status": "processing"
+   }
+    ```
+
+2. ### User Checks Query Status:
+
+   Request:
+
+   ```
+   http GET /api/queries/123456
+   ```
+
+   Response:
+
+   ```json
+   {
+        "id": 602,
+        "user": "filo",
+        "submitted_at": "2024-06-18T18:00:23.312437Z",
+        "status": "Completed",
+        "result": {
+            "id": 765,
+            "location": {
+                "id": 4,
+                "name": "Jamieton",
+                "latitude": -46.7436955,
+                "longitude": -33.963824
+            },
+            "date": "2024-06-03",
+            "time": null,
+            "temperature": 13.614285714285714,
+            "description": "Partly Cloudy"
+    }
+   }
+   ```

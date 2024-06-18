@@ -1,12 +1,12 @@
-from datetime import datetime
+from collections import Counter
 
 from django.db.models import Avg
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Location, WeatherForecast, UserQuery
-from .serializers import LocationSerializer, WeatherForecastSerializer, AverageWeatherSerializer, UserQuerySerializer
+from .serializers import LocationSerializer, WeatherForecastSerializer, UserQuerySerializer, \
+    UserQueryCreateSerializer
 
 
 class LocationList(generics.ListAPIView):
@@ -24,37 +24,61 @@ class WeatherForecastList(generics.ListAPIView):
     serializer_class = WeatherForecastSerializer
 
 
-class UserQueryCreate(generics.CreateAPIView):
+class UserQueryCreateView(generics.CreateAPIView):
     queryset = UserQuery.objects.all()
-    serializer_class = UserQuerySerializer
+    serializer_class = UserQueryCreateSerializer
+    permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        user_query = serializer.save()
+        if not user_query.time:
+            self.compute_average_weather(user_query)
+        else:
+            user_query.status = 'Processing'
+            user_query.save()
 
-class UserQueryDetail(generics.RetrieveAPIView):
-    queryset = UserQuery.objects.all()
-    serializer_class = UserQuerySerializer
-
-
-class AverageWeatherView(APIView):
-    def get(self, request, location, date):
-        try:
-            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
-        except ValueError:
-            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        forecasts = WeatherForecast.objects.filter(location=location, date=date_obj)
-
-        if not forecasts.exists():
-            return Response({'error': 'No data available for this date.'}, status=status.HTTP_404_NOT_FOUND)
-
-        average_temperature = forecasts.aggregate(Avg('temperature'))['temperature__avg']
-        average_weather = forecasts.values('description').annotate(count=Avg('temperature')).order_by('-count').first()[
-            'description']
-
-        data = {
-            'date': date_obj,
-            'average_temperature': average_temperature,
-            'average_weather': average_weather
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        response.data = {
+            'queryId': response.data['id'],
+            'status': 'processing'
         }
+        return response
 
-        serializer = AverageWeatherSerializer(data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def compute_average_weather(self, user_query):
+        forecasts = WeatherForecast.objects.filter(
+            location=user_query.location,
+            date=user_query.date
+        )
+
+        average_weather = forecasts.aggregate(
+            average_temperature=Avg('temperature')
+        )
+
+        if forecasts.exists():
+            descriptions = [forecast.description for forecast in forecasts]
+            most_common_description = Counter(descriptions).most_common(1)[0][0]
+
+            avg_forecast = WeatherForecast.objects.create(
+                location=user_query.location,
+                date=user_query.date,
+                time=None,
+                temperature=average_weather['average_temperature'],
+                description=most_common_description
+            )
+            user_query.result = avg_forecast
+            user_query.status = 'Completed'
+            user_query.save()
+        else:
+            user_query.status = 'Failed'
+            user_query.save()
+
+
+class UserQueryDetailView(generics.RetrieveAPIView):
+    queryset = UserQuery.objects.all()
+    serializer_class = UserQuerySerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)

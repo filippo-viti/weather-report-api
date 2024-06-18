@@ -17,13 +17,23 @@ class WeatherForecastSerializer(serializers.ModelSerializer):
 
 
 class UserQuerySerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    result = WeatherForecastSerializer()
+
     class Meta:
         model = UserQuery
-        fields = '__all__'
+        fields = ['id', 'user', 'submitted_at', 'status', 'result']
 
 
-class AverageWeatherSerializer(serializers.Serializer):
-    location = LocationSerializer()
-    date = serializers.DateField()
-    average_temperature = serializers.FloatField()
-    average_weather = serializers.CharField()
+class UserQueryCreateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)  # Include id field
+
+    time = serializers.TimeField(required=False, allow_null=True)
+
+    class Meta:
+        model = UserQuery
+        fields = ['id', 'location', 'date', 'time']  # Include 'id' in fields list
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return UserQuery.objects.create(user=user, **validated_data)
