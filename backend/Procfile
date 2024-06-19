@@ -1,1 +1,1 @@
-python manage.py migrate && gunicorn weather_report_api.wsg
+web: python manage.py makemigrations && python manage.py migrate && python manage.py generate_test_data && gunicorn weather_report_api.wsg
