@@ -43,14 +43,14 @@ export const loginUser = async (username: string, password: string) => {
   }
 };
 
-export const refreshToken = async (refresh: string) => {
+export const getNewAccessToken = async (refreshToken: string) => {
   try {
     const response = await fetch(`${BASE_API_URL}/auth/token/refresh/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({refresh}),
+      body: JSON.stringify({refresh: refreshToken}),
     });
 
     if (!response.ok) {
@@ -66,15 +66,17 @@ export const refreshToken = async (refresh: string) => {
   }
 }
 
-export const submitQuery = async (location: string, date: string, time: string, user: string, token: string) => {
+export const submitQuery = async (location: number, date: string, time: string | null, accessToken: string) => {
   try {
+    const body = time ? { location, date, time } : { location, date };
+
     const response = await fetch(`${BASE_API_URL}/queries/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${accessToken}`
       },
-      body: JSON.stringify({location, date, time, user}),
+      body: JSON.stringify(body),
     });
     return response.json();
   } catch (error) {
@@ -83,20 +85,19 @@ export const submitQuery = async (location: string, date: string, time: string, 
   }
 }
 
-export const checkQueryStatus = async (queryId: string, token: string) => {
+export const checkQueryStatus = async (queryId: number, accessToken: string) => {
   try {
     const response = await fetch(`${BASE_API_URL}/queries/${queryId}/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${accessToken}`
       },
     });
     return response.json();
   } catch (error) {
     console.error('Error during query status check:', error);
     throw error;
-
   }
 }
 
