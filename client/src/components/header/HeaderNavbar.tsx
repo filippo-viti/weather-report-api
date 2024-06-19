@@ -5,23 +5,27 @@ import GitHubButton from "./GitHubButton.tsx";
 import LoginButton from "../authentication/LoginButton.tsx";
 import RegisterButton from "../authentication/RegisterButton.tsx";
 import {useAuth} from "../authentication/AuthProvider.tsx";
-import {useEffect, useState} from "react";
-import {refreshToken} from "../../api.ts";
+import {useEffect, useState, useRef} from "react";
+import {getNewAccessToken} from "../../api.ts";
 
 export default function HeaderNavbar() {
   const {accessToken, login} = useAuth();
   const [showAlert, setShowAlert] = useState(false);
+  const refreshTokenExecuted = useRef(false);
 
   useEffect(() => {
-    const refresh = localStorage.getItem('refreshToken');
-    if (refresh) {
-      refreshToken(refresh)
-        .then(token => {
-          login(token);
-        })
-        .catch(error => {
-          console.error('Failed to refresh token:', error);
-        });
+    if (!refreshTokenExecuted.current) {
+      refreshTokenExecuted.current = true;
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken) {
+        getNewAccessToken(refreshToken)
+          .then(jwtResponse => {
+            login(jwtResponse);
+          })
+          .catch(error => {
+            console.error('Failed to refresh token:', error);
+          });
+      }
     }
   }, [login]);
 
@@ -65,7 +69,6 @@ export default function HeaderNavbar() {
           Welcome back!
         </Alert>
       )}
-
     </>
   );
 }
