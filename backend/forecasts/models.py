@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, IntegrityError
 
 User = get_user_model()
 
@@ -31,6 +31,13 @@ class WeatherForecast(models.Model):
     ]
     description = models.CharField(max_length=20, choices=WEATHER_CHOICES)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['location', 'date', 'time'], name='unique_location_date_time'),
+            models.UniqueConstraint(fields=['location', 'date'], condition=models.Q(time__isnull=True),
+                                    name='unique_location_date_no_time')
+        ]
+
     def __str__(self):
         return f'{self.date} {self.time or ""} - {self.location.name}'
 
@@ -44,5 +51,12 @@ class UserQuery(models.Model):
     status = models.CharField(max_length=20, default='Processing')
     result = models.ForeignKey(WeatherForecast, on_delete=models.CASCADE, null=True, blank=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'location', 'date', 'time'], name='unique_user_location_date_time'),
+            models.UniqueConstraint(fields=['user', 'location', 'date'], condition=models.Q(time__isnull=True),
+                                    name='unique_user_location_date_no_time')
+        ]
+
     def __str__(self):
-        return f'{self.user.username} - {self.location.name} - {self.date} {self.time}'
+        return f'{self.user.username} - {self.location.name} - {self.date} {self.time or ""}'

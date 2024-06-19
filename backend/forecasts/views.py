@@ -1,12 +1,12 @@
 from collections import Counter
 
 from django.db.models import Avg
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Location, WeatherForecast, UserQuery
-from .serializers import LocationSerializer, WeatherForecastSerializer, UserQuerySerializer, \
-    UserQueryCreateSerializer
+from .serializers import LocationSerializer, WeatherForecastSerializer, UserQuerySerializer, UserQueryCreateSerializer
 
 
 class LocationList(generics.ListAPIView):
@@ -29,21 +29,33 @@ class UserQueryCreateView(generics.CreateAPIView):
     serializer_class = UserQueryCreateSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        user_query = serializer.save()
-        if not user_query.time:
-            self.compute_average_weather(user_query)
-        else:
-            user_query.status = 'Processing'
-            user_query.save()
-
     def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        response.data = {
-            'queryId': response.data['id'],
+        user = self.request.user
+        location = request.data.get('location')
+        date = request.data.get('date')
+        time = request.data.get('time', None)
+
+        # Check if a UserQuery with the same location, date, and time already exists for the user
+        existing_query = UserQuery.objects.filter(user=user, location=location, date=date, time=time).first()
+
+        if existing_query:
+            serializer = UserQuerySerializer(existing_query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # If no existing query, proceed with creating a new one
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user_query = serializer.save()
+
+        # Perform average weather computation if time is null
+        if not time:
+            self.compute_average_weather(user_query)
+
+        response_data = {
+            'queryId': user_query.id,
             'status': 'processing'
         }
-        return response
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
     def compute_average_weather(self, user_query):
         forecasts = WeatherForecast.objects.filter(
