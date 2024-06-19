@@ -24,4 +24,4 @@ class WeatherForecastFactory(DjangoModelFactory):
     date = factory.Faker('date_between_dates', date_start=datetime(2024, 6, 3), date_end=datetime(2024, 6, 9))
     time = factory.Faker('time', pattern='%H:%M:%S')
     temperature = factory.LazyFunction(lambda: round(random.uniform(-10, 40), 1))
-    description = factory.Faker('random_element', elements=['Sunny', 'Partly Cloudy', 'Cloudy', 'Clear', 'Rainy'])
+    description = factory.Faker('random_element', elements=['Sunny', 'Partly Cloudy', 'Cloudy', 'Snowy', 'Rainy'])
