@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client # Set the default working directory to the client subdirectory
+        working-directory: ./client # Set the default working directory to the client subdirectory
     steps:
       - name: Checkout
         uses: actions/checkout@v4
