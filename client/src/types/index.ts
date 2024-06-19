@@ -24,7 +24,16 @@ export enum WeatherDescription {
 export interface WeatherForecast {
   location: Location,
   date: string,
-  time: string,
+  time: string | null,
   temperature: number,
   description: WeatherDescription
+}
+
+export interface UserQuery {
+  id: number,
+  location: Location,
+  date: string,
+  time: string | null,
+  status: string,
+  result: WeatherForecast | null
 }
