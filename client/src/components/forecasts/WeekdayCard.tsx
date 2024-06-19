@@ -8,7 +8,7 @@ export default function WeekdayCard({ weather }: { weather: WeatherForecast }) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className={"text-center"}>
         <CardTitle>{weather.date}</CardTitle>
       </CardHeader>
       <CardBody>
