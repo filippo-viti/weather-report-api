@@ -5,7 +5,7 @@ import WeekdayCard from './WeekdayCard';
 import { submitQuery, checkQueryStatus } from '../../api';
 import { useAuth } from '../authentication/AuthProvider';
 
-export default function LocationContainer({ location }: { location: Location }) {
+export default function WeekdaysContainer({ location }: { location: Location }) {
   const { accessToken } = useAuth();
   const days = ['2024-6-3', '2024-6-4', '2024-6-5', '2024-6-6', '2024-6-7', '2024-6-8', '2024-6-9'];
 
@@ -22,14 +22,16 @@ export default function LocationContainer({ location }: { location: Location }) 
           if (queryResponse.status === 'Completed' && queryResponse.result) {
             return { date, weather: queryResponse.result };
           } else if (queryResponse.status === 'Failed') {
-            return { date, weather: null }; // Handle the "Failed" status
+            // Return a default WeatherForecast with location and date
+            return { date, weather: { location, date, time: null, temperature: null, description: null } };
           } else {
             const checkStatus = async (): Promise<WeatherForecast | null> => {
               const statusResponse: UserQuery = await checkQueryStatus(queryResponse.id, accessToken!);
               if (statusResponse.status === 'Completed' && statusResponse.result) {
                 return statusResponse.result;
               } else if (statusResponse.status === 'Failed') {
-                return null; // Handle the "Failed" status in recursive call
+                // Handle the "Failed" status in recursive call
+                return { location, date, time: null, temperature: null, description: null };
               } else {
                 return new Promise((resolve) => {
                   setTimeout(async () => {
@@ -68,11 +70,7 @@ export default function LocationContainer({ location }: { location: Location }) 
         {days.map((date) => (
           <Col key={date}>
             {weatherData[date] !== undefined ? (
-              weatherData[date] ? (
-                <WeekdayCard weather={weatherData[date] as WeatherForecast} />
-              ) : (
-                <div>No forecasts available</div>
-              )
+              <WeekdayCard weather={weatherData[date] as WeatherForecast} />
             ) : (
               <div>Loading...</div>
             )}

@@ -25,8 +25,8 @@ export interface WeatherForecast {
   location: Location,
   date: string,
   time: string | null,
-  temperature: number,
-  description: WeatherDescription
+  temperature: number | null,
+  description: WeatherDescription | null
 }
 
 export interface UserQuery {

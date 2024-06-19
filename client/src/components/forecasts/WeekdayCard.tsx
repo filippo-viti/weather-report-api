@@ -2,7 +2,9 @@ import { Card, CardBody, CardHeader, CardText, CardTitle, Row } from "react-boot
 import { WeatherDescription, WeatherForecast } from "../../types";
 
 export default function WeekdayCard({ weather }: { weather: WeatherForecast }) {
-  const formattedTemperature = weather.temperature.toFixed(2); // Limit to two decimal places
+  const formattedTemperature = weather.temperature ? weather.temperature.toFixed(2) + "°C" : null;
+  const weatherDescription = weather.description || "No forecasts available";
+  const weatherIcon = getWeatherIcon(weather.description || "default");
 
   return (
     <Card>
@@ -11,18 +13,18 @@ export default function WeekdayCard({ weather }: { weather: WeatherForecast }) {
       </CardHeader>
       <CardBody>
         <Row className={"text-center align-content-center fs-1"}>
-          <i className={getWeatherIcon(weather.description)}></i>
+          <i className={weatherIcon}></i>
         </Row>
         <Row className={"text-center"}>
-          <CardText className={"m-0"}>{weather.description}</CardText>
-          <CardText>{formattedTemperature}°C</CardText>
+          <CardText>{weatherDescription}</CardText>
+          {formattedTemperature && <CardText>{formattedTemperature}</CardText>}
         </Row>
       </CardBody>
     </Card>
   );
 }
 
-function getWeatherIcon(description: WeatherDescription) {
+function getWeatherIcon(description: WeatherDescription | "default") {
   switch (description) {
     case 'Sunny':
       return 'bi bi-sun';
