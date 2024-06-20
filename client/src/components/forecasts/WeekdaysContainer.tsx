@@ -26,7 +26,7 @@ export default function WeekdaysContainer({ location }: { location: Location }) 
             return { date, weather: { location, date, time: null, temperature: null, description: null } };
           } else {
             const checkStatus = async (): Promise<WeatherForecast | null> => {
-              const statusResponse: UserQuery = await checkQueryStatus(queryResponse.id, accessToken!);
+              const statusResponse: UserQuery = await checkQueryStatus(queryResponse.queryId, accessToken!);
               if (statusResponse.status === 'Completed' && statusResponse.result) {
                 return statusResponse.result;
               } else if (statusResponse.status === 'Failed') {

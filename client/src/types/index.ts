@@ -30,7 +30,7 @@ export interface WeatherForecast {
 }
 
 export interface UserQuery {
-  id: number,
+  queryId: number,
   location: Location,
   date: string,
   time: string | null,
