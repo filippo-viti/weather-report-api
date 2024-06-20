@@ -10,11 +10,7 @@ export default function RegisterButton() {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const handleRegister = async () => {
     const response = await registerUser(username, password, confirmPassword, email);
-    if (response.status === 201) {
-      setRegisterModalShow(false);
-    } else {
-      console.log(response);
-    }
+    if (response) window.location.reload();
   };
 
   return (
