@@ -121,7 +121,7 @@ Here is the basic flow of how the authentication works:
                 "longitude": -33.963824
             },
             "date": "2024-06-03",
-            "time": null,
+            "time": "14:00",
             "temperature": 13.614285714285714,
             "description": "Partly Cloudy"
     }
