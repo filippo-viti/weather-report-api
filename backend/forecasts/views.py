@@ -58,6 +58,19 @@ class UserQueryCreateView(generics.CreateAPIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     def compute_average_weather(self, user_query):
+        # Check if the average forecast already exists
+        avg_forecast = WeatherForecast.objects.filter(
+            location=user_query.location,
+            date=user_query.date,
+            time__isnull=True
+        ).first()
+
+        if avg_forecast:
+            user_query.result = avg_forecast
+            user_query.status = 'Completed'
+            user_query.save()
+            return
+
         forecasts = WeatherForecast.objects.filter(
             location=user_query.location,
             date=user_query.date
