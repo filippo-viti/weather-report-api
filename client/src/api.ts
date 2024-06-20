@@ -66,7 +66,7 @@ export const getNewAccessToken = async (refreshToken: string) => {
   }
 };
 
-export const submitQuery = async (location: string, date: string, time: string | null, accessToken: string) => {
+export const submitQuery = async (location: number, date: string, time: string | null, accessToken: string) => {
   try {
     const body = time ? { location, date, time } : { location, date };
     const response = await fetch(`${BASE_API_URL}/queries/`, {
@@ -83,7 +83,7 @@ export const submitQuery = async (location: string, date: string, time: string |
   }
 };
 
-export const checkQueryStatus = async (queryId: string, accessToken: string) => {
+export const checkQueryStatus = async (queryId: number, accessToken: string) => {
   try {
     const response = await fetch(`${BASE_API_URL}/queries/${queryId}/`, {
       method: 'GET',
